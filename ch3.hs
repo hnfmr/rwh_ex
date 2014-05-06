@@ -96,7 +96,14 @@ turn a b c
   | prod > 0 = LeftT
   | prod < 0 = RightT
   | otherwise = StraightT
-  where prod = (gradient a c)/(gradient a b)
+  where prod = (gradient a b)/(gradient a c)
+
+slidingDirection :: [Point] -> [Direction]
+slidingDirection [] = []
+slidingDirection (a:[]) = []
+slidingDirection (a:b:[]) = []
+slidingDirection (a:b:c:ps) = turn a b c : slidingDirection (b:c:ps)
+
 
 {-
 angle :: Point -> Point -> Point -> Double
