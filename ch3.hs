@@ -1,3 +1,5 @@
+import Data.List
+
 length' :: [a] -> Int
 length' [] = 0
 length' (x:xs) = 1 + length' xs
@@ -104,7 +106,31 @@ slidingDirection (a:[]) = []
 slidingDirection (a:b:[]) = []
 slidingDirection (a:b:c:ps) = turn a b c : slidingDirection (b:c:ps)
 
+minAB :: Point -> Point -> Point
+minAB a b
+  | y(a) < y(b) = a
+  | y(a) == y(b) = if x(a) < x(b)
+                   then a
+                   else b
+  | otherwise = b
 
+smallestY :: [Point] -> Point
+smallestY ps =  foldl1 minAB ps
+
+
+smallerAngle :: Point -> Point -> Point -> Ordering
+smallerAngle p a b =
+  let pa = abAngle p a
+      pb = abAngle p b
+  in let s = signum(pa - pb)
+     in case s of
+          0 -> EQ
+          1 -> GT
+          -1 -> LT
+
+sortPoints :: [Point] -> [Point]
+sortPoints ps = let p = smallestY ps
+                in sortBy (\a b -> smallerAngle p a b) ps
 {-
 angle :: Point -> Point -> Point -> Double
 angle a b c = let abDist = distance a b
