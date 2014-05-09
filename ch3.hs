@@ -131,6 +131,12 @@ smallerAngle p a b =
 sortPoints :: [Point] -> [Point]
 sortPoints ps = let p = smallestY ps
                 in sortBy (\a b -> smallerAngle p a b) ps
+
+crossProduct :: Point -> Point -> Double
+crossProduct (Point x1 y1) (Point x2 y2) = x1*y2 - y1*x2
+
+data ClockDirection = Clockwise | Counterclockwise deriving (Show)
+
 {-
 angle :: Point -> Point -> Point -> Double
 angle a b c = let abDist = distance a b
