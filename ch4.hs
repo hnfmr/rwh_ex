@@ -47,10 +47,10 @@ asInt_either cs = foldl step (Right 0) cs
         step (Left err) _ = Left err
         
 groupBy' :: (a -> a -> Bool) -> [a] -> [[a]]
-groupBy' f xs = step [] xs
-  where step acc [] = acc
-        step acc (x':xs') =
-                          
+groupBy' f xl = step [] xl
+  where step acc [] = reverse acc
+        step acc (x:xs) = step (([x] ++ (takeWhile (\a -> f x a) xs)):acc)
+                            (dropWhile (\a -> f x a) xs)
                           
                           
                           
