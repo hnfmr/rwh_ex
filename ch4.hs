@@ -1,4 +1,5 @@
 import Data.Char
+import Data.List (isPrefixOf)
 
 safeHead :: [a] -> Maybe a
 safeHead [] = Nothing
@@ -51,14 +52,12 @@ groupBy' f xl = step [] xl
   where step acc [] = reverse acc
         step acc (x:xs) = step (([x] ++ (takeWhile (\a -> f x a) xs)):acc)
                             (dropWhile (\a -> f x a) xs)
-                          
-                          
-                          
-                          
-                          
-                          
-                          
-                          
-                          
-                          
-                          
+
+dlts :: String -> [String]
+dlts = foldr step [] . lines
+  where step l ds
+          | "#define DLT_" `isPrefixOf` l = secondWord l : ds
+          | otherwise                     = ds
+        secondWord = head . tail . words
+
+
