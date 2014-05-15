@@ -17,20 +17,11 @@ string = enclose '"' '"' . hcat . map oneChar
 enclose :: Char -> Char -> Doc -> Doc
 enclose left right x = char left <> x <> char right
 
-(<>) :: Doc -> Doc -> Doc
-a <> b = undefined
-
-char :: Char -> Doc
-char c = undefined
-
-hcat :: [Doc] -> Doc
-hcat xs = undefined
-
 oneChar :: Char -> Doc
 oneChar c = case lookup c simpleEscapes of
               Just r -> text r
               Nothing | mustEscape c -> hexEscape c
-                      | otherwise    -> char C
+                      | otherwise    -> char c
   where mustEscape c = c < ' ' || c == '\x7f' || c > '\xff'
   
 simpleEscapes :: [(Char, String)]
@@ -46,6 +37,7 @@ smallHex x = text "\\u"
 astral :: Int -> Doc
 astral n = smallHex (a + 0xd800) <> smallHex (b + 0xdc00)
     where a = (n `shiftR` 10) .&. 0x3ff
+          b = n .&. 0x3ff
 
 hexEscape :: Char -> Doc
 hexEscape c | d < 0x10000 = smallHex d
@@ -54,7 +46,7 @@ hexEscape c | d < 0x10000 = smallHex d
     
 series :: Char -> Char -> (a -> Doc) -> [a] -> Doc
 series open close item = enclose open close
-                       . fsep . puncuate (char ',') . map item
+                       . fsep . punctuate (char ',') . map item
                        
 renderJValue (JObject obj) = series '{' '}' field obj
     where field (name,val) = string name
