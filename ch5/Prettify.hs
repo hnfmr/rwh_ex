@@ -92,3 +92,22 @@ punctuate :: Doc -> [Doc] -> [Doc]
 punctuate p []      = []
 punctuate p [d]     = [d]
 punctuate p (d:ds)  = (d <> p) : punctuate p ds
+
+fill :: Int -> Doc -> String
+fill a d =
+    let offset = replicate (a - len d) ' '
+                 where len d = case d of
+                                 Empty        -> 0
+                                 Char c       -> 1
+                                 Text s       -> length s
+                                 Line         -> 0
+                                 x `Concat` y -> len x + len y
+                                 x `Union` y  -> max (len x) (len y)
+    in case d of
+        Empty        -> offset
+        Char c       -> c:offset
+        Text s       -> s++offset
+        Line         -> offset
+        x `Concat` y -> fill a x ++ fill a y
+        _ `Union` x  -> fill a x
+

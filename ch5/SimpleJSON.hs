@@ -1,5 +1,4 @@
 -- file: ch05/SimpleJSON.hs
--- file: ch05/SimpleJSON.hs
 module SimpleJSON
     (
       JValue(..)
