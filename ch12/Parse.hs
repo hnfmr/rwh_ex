@@ -6,7 +6,7 @@ import qualified Data.ByteString.Lazy.Char8 as L8
 import qualified Data.ByteString.Lazy as L
 import Data.Word (Word8)
 import Control.Applicative
-import Data.Char (chr)
+import Data.Char (chr, isDigit, isSpace)
 
 data ParseState = ParseState {
        string :: L.ByteString
@@ -85,3 +85,28 @@ parseWhile p = (fmap p <$> peekByte) ==> \mp ->
                then parseByte ==> \b ->
                     (b:) <$> parseWhile p
                else identity []
+
+--parseRawPGM =
+--    parseWileWith w2c notWhite ==> \header -> 
+
+parseWhileWith :: (Word8 -> a) -> (a -> Bool) -> Parse [a]
+parseWhileWith f p = fmap f <$> parseWhile (p . f)
+
+parseNat :: Parse Int
+parseNat = parseWhileWith w2c isDigit ==> \digits ->
+           if null digits
+           then bail "no more input"
+           else let n = read digits
+                in if n < 0
+                   then bail "integer overflow"
+                   else identity n
+                   
+(==>&) :: Parse a -> Parse b -> Parse b
+p ==>& f = p ==> \_ -> f
+
+skipSpaces :: Parse ()
+skipSpaces = parseWhileWith w2c isSpace ==>& identity ()
+
+assert :: Bool -> String -> Parse ()
+assert True  _   = identity ()
+assert False err = bail err
