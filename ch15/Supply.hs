@@ -27,4 +27,4 @@ showTwo :: (Show s) => Supply s String
 showTwo = do
   a <- next
   b <- next
-  return (show "a: " ++ show a ++ ", b: " ++ show b)
+  return ("a: " ++ show a ++ ", b: " ++ show b)
